@@ -1,5 +1,6 @@
 package com.burakarslan.facebookclone;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
                             if(task.isSuccessful()){
                                 Toast.makeText(getApplicationContext(),"User Created",Toast.LENGTH_LONG).show();
+
+                                Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
+                                startActivity(intent);
                             }
 
                         }
@@ -62,7 +66,23 @@ public class MainActivity extends AppCompatActivity {
 
         }
         public void signIn(View view){
+mAuth.signInWithEmailAndPassword(emailText.getText().toString(),passwordText.getText().toString())
+        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful())
+                {
 
+                    Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
+                    startActivity(intent);
+                }
+            }
+        }).addOnFailureListener(this, new OnFailureListener() {
+    @Override
+    public void onFailure(@NonNull Exception e) {
+        Toast.makeText(getApplicationContext(),e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
+    }
+});
         }
 
     @Override
