@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 
 public class FeedActivity extends AppCompatActivity {
 
+
+
     SectionsPageAdapter sectionsPageAdapter;
     private ViewPager viewPager;
 
@@ -14,6 +16,7 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+
 
             sectionsPageAdapter=new SectionsPageAdapter(getSupportFragmentManager());
         viewPager=(ViewPager) findViewById(R.id.container);

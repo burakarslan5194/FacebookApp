@@ -13,8 +13,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class UploadActivity extends AppCompatActivity {
 
@@ -22,6 +34,15 @@ public class UploadActivity extends AppCompatActivity {
     ImageView imageView;
     Button button1;
     Button button2;
+
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference myRef;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private StorageReference mStorageRef;
+    Uri selected;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +53,50 @@ public class UploadActivity extends AppCompatActivity {
         imageView=(ImageView) findViewById(R.id.imageView);
         button1=(Button) findViewById(R.id.button3);
         button2=(Button) findViewById(R.id.button4);
+        firebaseDatabase=FirebaseDatabase.getInstance();
+        myRef=firebaseDatabase.getReference();
+        mAuth=FirebaseAuth.getInstance();
+        mStorageRef= FirebaseStorage.getInstance().getReference();
+
+    }
+
+    public void uploadImage(View view){
+
+        UUID uuidImage=UUID.randomUUID();
+        String imageName="images/"+uuidImage+".jpg";
+
+    StorageReference storageReference=mStorageRef.child(imageName);
+        storageReference.putFile(selected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @SuppressWarnings("VisibleForTests")
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+
+                String downloadURL=taskSnapshot.getDownloadUrl().toString();
+
+                FirebaseUser user=mAuth.getCurrentUser();
+                String userEmail=user.getEmail().toString();
+                String userComment=editText2.getText().toString();
+
+                UUID uuid=UUID.randomUUID();
+                String uuidString=uuid.toString();
+
+                myRef.child("Posts").child(uuidString).child("useremail").setValue(userEmail);
+                myRef.child("Posts").child(uuidString).child("comment").setValue(userComment);
+                myRef.child("Posts").child(uuidString).child("downloadURL").setValue(downloadURL);
+
+                Toast.makeText(getApplicationContext(),"Post Shared",Toast.LENGTH_LONG).show();
+                Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
+                startActivity(intent);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(),e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 
     public void chooseImage(View view){
@@ -68,7 +133,7 @@ public class UploadActivity extends AppCompatActivity {
 
         if(requestCode==2 && resultCode==RESULT_OK && data!= null){
 
-            Uri selected=data.getData();
+            selected=data.getData();
             try {
                 Bitmap bitmap=MediaStore.Images.Media.getBitmap(this.getContentResolver(), selected);
                 imageView.setImageBitmap(bitmap);
@@ -81,10 +146,6 @@ public class UploadActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void uploadImage(View view){
 
-
-
-    }
 
 }
