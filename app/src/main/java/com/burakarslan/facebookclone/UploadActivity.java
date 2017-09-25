@@ -15,18 +15,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
-import java.util.UUID;
 
 public class UploadActivity extends AppCompatActivity {
 
@@ -34,6 +29,8 @@ public class UploadActivity extends AppCompatActivity {
     ImageView imageView;
     Button button1;
     Button button2;
+    Bitmap bitmap;
+
 
     FirebaseDatabase firebaseDatabase;
     DatabaseReference myRef;
@@ -49,6 +46,8 @@ public class UploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
+
+
         editText2=(EditText) findViewById(R.id.editText3);
         imageView=(ImageView) findViewById(R.id.imageView);
         button1=(Button) findViewById(R.id.button3);
@@ -60,12 +59,12 @@ public class UploadActivity extends AppCompatActivity {
 
     }
 
-    public void uploadImage(View view){
+    /*public void uploadImage(View view){
 
         UUID uuidImage=UUID.randomUUID();
         String imageName="images/"+uuidImage+".jpg";
 
-    StorageReference storageReference=mStorageRef.child(imageName);
+        StorageReference storageReference=mStorageRef.child(imageName);
         storageReference.putFile(selected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @SuppressWarnings("VisibleForTests")
             @Override
@@ -97,7 +96,7 @@ public class UploadActivity extends AppCompatActivity {
             }
         });
 
-    }
+    }*/
 
     public void chooseImage(View view){
 
@@ -121,6 +120,7 @@ public class UploadActivity extends AppCompatActivity {
 
                 Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent,2);
+
             }
         }
 
@@ -135,12 +135,23 @@ public class UploadActivity extends AppCompatActivity {
 
             selected=data.getData();
             try {
-                Bitmap bitmap=MediaStore.Images.Media.getBitmap(this.getContentResolver(), selected);
-                imageView.setImageBitmap(bitmap);
+
+                bitmap=MediaStore.Images.Media.getBitmap(this.getContentResolver(), selected);
+                Intent intent=new Intent(UploadActivity.this,CropActivity.class);
+                intent.putExtra("bitmap",bitmap);
+                startActivity(intent);
+
+
+
+             //   imageView.setImageBitmap(bitmap2);
             } catch (IOException e) {
                 e.printStackTrace();
+                Toast.makeText(getApplicationContext(),e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
             }
 
+        }
+        else{
+            Toast.makeText(getApplicationContext(),"Olmadı",Toast.LENGTH_LONG).show();
         }
 
         super.onActivityResult(requestCode, resultCode, data);
