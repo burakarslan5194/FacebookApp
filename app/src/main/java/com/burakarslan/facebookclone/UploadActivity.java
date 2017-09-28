@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class UploadActivity extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class UploadActivity extends AppCompatActivity {
     Button button1;
     Button button2;
     Bitmap bitmap;
+    Boolean b=false;
 
 
     FirebaseDatabase firebaseDatabase;
@@ -46,7 +48,13 @@ public class UploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
+        if(b==true){
+            Intent intent2=new Intent(getApplicationContext(),CropActivity.class);
+            intent2.putExtra("bitmap",bitmap);
+            Toast.makeText(getApplicationContext(),"sdfsdfsdf",Toast.LENGTH_LONG).show();
+            startActivity(intent2);
 
+        }
 
         editText2=(EditText) findViewById(R.id.editText3);
         imageView=(ImageView) findViewById(R.id.imageView);
@@ -105,8 +113,15 @@ public class UploadActivity extends AppCompatActivity {
             requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},1);
 
         }else{
-            Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+           Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent,2);
+
+
+
+
+
+
+
         }
 
     }
@@ -118,8 +133,8 @@ public class UploadActivity extends AppCompatActivity {
 
             if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
 
-                Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent,2);
+               // Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+               // startActivityForResult(intent,2);
 
             }
         }
@@ -131,22 +146,32 @@ public class UploadActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(requestCode==2 && resultCode==RESULT_OK && data!= null){
+        if(requestCode==2 && resultCode==RESULT_OK  && data!= null){
 
             selected=data.getData();
             try {
-
+                b=true;
                 bitmap=MediaStore.Images.Media.getBitmap(this.getContentResolver(), selected);
-                Intent intent=new Intent(UploadActivity.this,CropActivity.class);
-                intent.putExtra("bitmap",bitmap);
-                startActivity(intent);
 
 
 
-             //   imageView.setImageBitmap(bitmap2);
+
+
+
+            // imageView.setImageBitmap(bitmap);
+
+               Intent intent2=new Intent(this,CropActivity.class);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] bytes = stream.toByteArray();
+                intent2.putExtra("bitmapbytes",bytes);
+               intent2.putExtra("imagePath", selected.toString());
+                Toast.makeText(getApplicationContext(),"sdfsdfsdf",Toast.LENGTH_LONG).show();
+               startActivity(intent2);
             } catch (IOException e) {
                 e.printStackTrace();
-                Toast.makeText(getApplicationContext(),e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"sdfsdfsdf",Toast.LENGTH_LONG).show();
             }
 
         }
@@ -154,7 +179,8 @@ public class UploadActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Olmadı",Toast.LENGTH_LONG).show();
         }
 
-        super.onActivityResult(requestCode, resultCode, data);
+
+       super.onActivityResult(requestCode, resultCode, data);
     }
 
 

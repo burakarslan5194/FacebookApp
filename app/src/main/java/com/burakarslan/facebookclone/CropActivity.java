@@ -29,6 +29,8 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 
+import static com.burakarslan.facebookclone.R.id.imageView;
+
 public class CropActivity extends AppCompatActivity {
 
 
@@ -43,8 +45,8 @@ public class CropActivity extends AppCompatActivity {
     Button btnCrop,btnToggleGesture,btnSend;
     ImageView btnSnap,btnRotate;
     CropperView cropperView;
-    Bitmap mBitmap,bitmap;
-    Uri selected;
+    Bitmap mBitmap,bitmap,bmp;
+    Uri selected,fileUri;
 
     boolean isSnappedtoCenter=false;
 
@@ -61,16 +63,26 @@ public class CropActivity extends AppCompatActivity {
         initViews();
 
 
+        Intent intent = getIntent();
+        String image_path= intent.getStringExtra("imagePath");
+        fileUri = Uri.parse(image_path);
+        //imageview.setImageUri(fileUri);
 
-        Bundle extras =getIntent().getExtras();
+       //Bundle extras=new Bundle();
+        //extras =getIntent().getExtras();
 
-        final byte [] byteArray=extras.getByteArray("bitmap");
-       bitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
+        //bitmap = getIntent().getParcelableExtra("bitmap");
+
+        byte[] bytes = getIntent().getByteArrayExtra("bitmapbytes");
+        bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+       // final byte [] byteArray=extras.getByteArray("bitmap");
+       //bitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
 
 
-
-        cropperView.setImageBitmap(bitmap);
         //Bitmap originalBitmap= BitmapFactory.decodeResource(getResources(),R.drawable.charlize1);
+        cropperView.setImageBitmap(bmp);
+
 
         btnCrop.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -107,7 +119,7 @@ public class CropActivity extends AppCompatActivity {
         btnRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cropperView.setImageBitmap(rotateBitmap(mBitmap,90));
+                cropperView.setImageBitmap(rotateBitmap(cropperView.getCroppedBitmap(),90));
             }
         });
 
@@ -117,9 +129,10 @@ public class CropActivity extends AppCompatActivity {
 
                 UUID uuidImage=UUID.randomUUID();
                 String imageName="images/"+uuidImage+".jpg";
-                selected=getImageUri(getApplicationContext(),mBitmap);
+             // selected=getImageUri(getApplicationContext(),cropperView.getCroppedBitmap());
+
                 StorageReference storageReference=mStorageRef.child(imageName);
-                storageReference.putFile(selected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                storageReference.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @SuppressWarnings("VisibleForTests")
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -129,7 +142,7 @@ public class CropActivity extends AppCompatActivity {
 
                         FirebaseUser user=mAuth.getCurrentUser();
                         String userEmail=user.getEmail().toString();
-                        String userComment="asdfg123";
+                        String userComment="asdfg12344";
 
                         UUID uuid=UUID.randomUUID();
                         String uuidString=uuid.toString();
@@ -161,15 +174,17 @@ public class CropActivity extends AppCompatActivity {
     }
 
     private Bitmap rotateBitmap(Bitmap mBitmap, float angle) {
+
         Matrix matrix=new Matrix();
         matrix.postRotate(angle);
+
         return Bitmap.createBitmap(mBitmap,0,0,mBitmap.getWidth(),mBitmap.getHeight(),matrix,true);
     }
 
     private void cropImage() {
-        mBitmap=cropperView.getCroppedBitmap();
-        if(mBitmap!=null){
-            cropperView.setImageBitmap(mBitmap);
+        bmp=cropperView.getCroppedBitmap();
+        if(bmp!=null){
+            cropperView.setImageBitmap(bmp);
 
         }
     }
@@ -183,7 +198,7 @@ public class CropActivity extends AppCompatActivity {
         btnToggleGesture=(Button) findViewById(R.id.btnToggleGesture);
         btnSnap=(ImageView) findViewById(R.id.snap_button);
         btnRotate=(ImageView) findViewById(R.id.rotate_button);
-        cropperView=(CropperView) findViewById(R.id.imageView);
+        cropperView=(CropperView) findViewById(imageView);
 
 
     }
