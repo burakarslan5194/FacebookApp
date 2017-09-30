@@ -1,6 +1,7 @@
 package com.burakarslan.facebookclone;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +28,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.UUID;
 
 import static com.burakarslan.facebookclone.R.id.imageView;
@@ -66,6 +72,7 @@ public class CropActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String image_path= intent.getStringExtra("imagePath");
         fileUri = Uri.parse(image_path);
+        final String commentText=intent.getStringExtra("edittext3");
         //imageview.setImageUri(fileUri);
 
        //Bundle extras=new Bundle();
@@ -126,13 +133,20 @@ public class CropActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+               // selected=getImageUri(getApplicationContext(),cropperView.getCroppedBitmap());
                 UUID uuidImage=UUID.randomUUID();
                 String imageName="images/"+uuidImage+".jpg";
              // selected=getImageUri(getApplicationContext(),cropperView.getCroppedBitmap());
 
+
+               String s = saveToInternalStorage(cropperView.getCroppedBitmap());
+                selected= Uri.parse(s);
+
+
+
+
                 StorageReference storageReference=mStorageRef.child(imageName);
-                storageReference.putFile(fileUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                storageReference.putFile(selected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @SuppressWarnings("VisibleForTests")
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -142,7 +156,7 @@ public class CropActivity extends AppCompatActivity {
 
                         FirebaseUser user=mAuth.getCurrentUser();
                         String userEmail=user.getEmail().toString();
-                        String userComment="asdfg12344";
+                        String userComment=commentText;
 
                         UUID uuid=UUID.randomUUID();
                         String uuidString=uuid.toString();
@@ -206,8 +220,53 @@ public class CropActivity extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage){
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG,100,bytes);
-        String path= MediaStore.Images.Media.insertImage(inContext.getContentResolver(),inImage,"title",null);
+        String path=MediaStore.Images.Media.insertImage(inContext.getContentResolver(),inImage,"title",null);
         return Uri.parse(path);
 
     }
+
+
+
+    private String saveToInternalStorage(Bitmap bitmapImage){
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,"profile.jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return directory.getAbsolutePath();
+    }
+
+
+    private void loadImageFromStorage(String path)
+    {
+
+        try {
+            File f=new File(path, "profile.jpg");
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f));
+            //ImageView img=(ImageView)findViewById(R.id.imgPicker);
+           // img.setImageBitmap(b);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+
 }

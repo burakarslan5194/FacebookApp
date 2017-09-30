@@ -165,9 +165,10 @@ public class UploadActivity extends AppCompatActivity {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                 byte[] bytes = stream.toByteArray();
+                intent2.putExtra("edittext3",editText2.getText().toString());
                 intent2.putExtra("bitmapbytes",bytes);
-               intent2.putExtra("imagePath", selected.toString());
-                Toast.makeText(getApplicationContext(),"sdfsdfsdf",Toast.LENGTH_LONG).show();
+                intent2.putExtra("imagePath", selected.toString());
+               // Toast.makeText(getApplicationContext(),"sdfsdfsdf",Toast.LENGTH_LONG).show();
                startActivity(intent2);
             } catch (IOException e) {
                 e.printStackTrace();
