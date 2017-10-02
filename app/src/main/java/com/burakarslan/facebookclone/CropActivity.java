@@ -55,6 +55,7 @@ public class CropActivity extends AppCompatActivity {
     CropperView cropperView;
     Bitmap mBitmap,bitmap,bmp;
     Uri selected,fileUri;
+    int rotated=1;
 
     boolean isSnappedtoCenter=false;
 
@@ -117,24 +118,29 @@ public class CropActivity extends AppCompatActivity {
             }
         });
 
-        btnSnap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isSnappedtoCenter){
-                    cropperView.cropToCenter();
-
-                }else{
-
-                    cropperView.fitToCenter();
-                }
-                isSnappedtoCenter= !isSnappedtoCenter;
-            }
-        });
+        cropperView.fitToCenter();
 
         btnRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cropperView.setImageBitmap(rotateBitmap(cropperView.getCroppedBitmap(),90));
+                if(rotated==1) {
+                    cropperView.setImageBitmap(rotateBitmap(bmp, 90));
+                    rotated=2;
+                }
+                else if (rotated==2){
+                    cropperView.setImageBitmap(rotateBitmap(bmp, 180));
+                    rotated=3;
+                }
+                else if (rotated==3){
+                    cropperView.setImageBitmap(rotateBitmap(bmp, 270));
+                    rotated=4;
+                }
+                else if (rotated==4){
+                    cropperView.setImageBitmap(rotateBitmap(bmp, 360));
+                    rotated=1;
+                }
+
+
             }
         });
 
@@ -307,7 +313,7 @@ public class CropActivity extends AppCompatActivity {
         btnSend=(Button) findViewById(R.id.btnSend);
         btnCrop=(Button) findViewById(R.id.btnCrop);
         btnToggleGesture=(Button) findViewById(R.id.btnToggleGesture);
-        btnSnap=(ImageView) findViewById(R.id.snap_button);
+
         btnRotate=(ImageView) findViewById(R.id.rotate_button);
         cropperView=(CropperView) findViewById(imageView);
 
