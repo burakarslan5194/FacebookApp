@@ -1,8 +1,10 @@
 package com.burakarslan.facebookclone;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -56,6 +58,10 @@ public class CropActivity extends AppCompatActivity {
 
     boolean isSnappedtoCenter=false;
 
+    String commentText;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +72,15 @@ public class CropActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         mStorageRef= FirebaseStorage.getInstance().getReference();
 
-        initViews();
-
-
         Intent intent = getIntent();
         String image_path= intent.getStringExtra("imagePath");
         fileUri = Uri.parse(image_path);
-        final String commentText=intent.getStringExtra("edittext3");
+        commentText=intent.getStringExtra("edittext3");
+
+        initViews();
+
+
+
         //imageview.setImageUri(fileUri);
 
        //Bundle extras=new Bundle();
@@ -130,19 +138,31 @@ public class CropActivity extends AppCompatActivity {
             }
         });
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
+        /*btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+
+                    if(checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+                        requestPermissions(new String[] {android.Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+
+                    }
+
+
+
                // selected=getImageUri(getApplicationContext(),cropperView.getCroppedBitmap());
                 UUID uuidImage=UUID.randomUUID();
                 String imageName="images/"+uuidImage+".jpg";
              // selected=getImageUri(getApplicationContext(),cropperView.getCroppedBitmap());
 
 
-               String s = saveToInternalStorage(cropperView.getCroppedBitmap());
-                selected= Uri.parse(s);
-
-
+              // String s = saveToInternalStorage(cropperView.getCroppedBitmap());
+               // selected= Uri.parse(s);
+                Bitmap deneme=cropperView.getCroppedBitmap();
+             String  s1=MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(),deneme,"title",null);
+                selected= Uri.parse(s1);
 
 
                 StorageReference storageReference=mStorageRef.child(imageName);
@@ -183,9 +203,14 @@ public class CropActivity extends AppCompatActivity {
 
 
             }
-        });
+        });*/
 
     }
+
+
+
+
+
 
     private Bitmap rotateBitmap(Bitmap mBitmap, float angle) {
 
@@ -201,6 +226,78 @@ public class CropActivity extends AppCompatActivity {
             cropperView.setImageBitmap(bmp);
 
         }
+    }
+
+    public void btnSend(View view) {
+
+        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+        } else {
+            // selected=getImageUri(getApplicationContext(),cropperView.getCroppedBitmap());
+            UUID uuidImage = UUID.randomUUID();
+            String imageName = "images/" + uuidImage + ".jpg";
+            // selected=getImageUri(getApplicationContext(),cropperView.getCroppedBitmap());
+
+
+            // String s = saveToInternalStorage(cropperView.getCroppedBitmap());
+            // selected= Uri.parse(s);
+            Bitmap deneme = cropperView.getCroppedBitmap();
+            String s1 = MediaStore.Images.Media.insertImage(getApplicationContext().getContentResolver(), deneme, "title", null);
+            selected = Uri.parse(s1);
+
+
+            StorageReference storageReference = mStorageRef.child(imageName);
+            storageReference.putFile(selected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @SuppressWarnings("VisibleForTests")
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+
+                    String downloadURL = taskSnapshot.getDownloadUrl().toString();
+
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    String userEmail = user.getEmail().toString();
+                    String userComment = commentText;
+
+                    UUID uuid = UUID.randomUUID();
+                    String uuidString = uuid.toString();
+
+                    myRef.child("Posts").child(uuidString).child("useremail").setValue(userEmail);
+                    myRef.child("Posts").child(uuidString).child("comment").setValue(userComment);
+                    myRef.child("Posts").child(uuidString).child("downloadURL").setValue(downloadURL);
+
+                    Toast.makeText(getApplicationContext(), "Post Shared", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getApplicationContext(), FeedActivity.class);
+                    startActivity(intent);
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if(requestCode==1){
+
+            if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+
+                // Intent intent =new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                // startActivityForResult(intent,2);
+
+            }
+        }
+
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void initViews(){
