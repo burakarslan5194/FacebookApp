@@ -123,6 +123,7 @@ public class CropActivity extends AppCompatActivity {
         btnRotate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(rotated==1) {
                     cropperView.setImageBitmap(rotateBitmap(bmp, 90));
                     rotated=2;
