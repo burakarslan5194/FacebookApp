@@ -1,22 +1,21 @@
 package com.burakarslan.facebookclone;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ImageView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.UUID;
 
 public class InformationActivity extends AppCompatActivity {
@@ -24,10 +23,14 @@ public class InformationActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    EditText emailText;
-    EditText passwordText;
+
+    EditText editTextName;
+    EditText editTextSurname;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference myRef;
+    String email,password,name,surname,uuidString;
+    ImageView imageView;
+    Uri selected;
 
 
     private StorageReference mStorageRef;
@@ -39,44 +42,69 @@ public class InformationActivity extends AppCompatActivity {
         myRef=firebaseDatabase.getReference();
         mAuth= FirebaseAuth.getInstance();
         mStorageRef= FirebaseStorage.getInstance().getReference();
+        editTextName=(EditText) findViewById(R.id.editTextname);
+        editTextSurname=(EditText) findViewById(R.id.editTextSurname);
+        imageView=(ImageView) findViewById(R.id.imageView);
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
+        password = intent.getStringExtra("password");
+        UUID uuid = UUID.randomUUID();
+        uuidString = uuid.toString();
+
+        selected = Uri.parse("android.resource://com.burakarslan.facebookclone/drawable/profile.jpg");
+        try {
+            InputStream stream = getContentResolver().openInputStream(selected);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
 
     }
-    public void Register()
-    {
-        mAuth.createUserWithEmailAndPassword(emailText.getText().toString(),passwordText.getText().toString())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        if(task.isSuccessful()){
+    public void Register(View view) {
 
 
 
-                            UUID uuid = UUID.randomUUID();
-                            String uuidString = uuid.toString();
+        name = editTextName.getText().toString();
+        surname = editTextSurname.getText().toString();
+        myRef.child("Users").child(uuidString).child("useremail").setValue(email);
+        myRef.child("Users").child(uuidString).child("password").setValue(password);
+        myRef.child("Users").child(uuidString).child("Friends");
+        myRef.child("Users").child(uuidString).child("FriendsRequest");
 
-                            String email=emailText.getText().toString();
-                            String password2=passwordText.getText().toString();
-                            myRef.child("Users").child(uuidString).child("useremail").setValue(email);
-                            myRef.child("Users").child(uuidString).child("password").setValue(password2);
-                            myRef.child("Users").child(uuidString).child("Friends");
-                            myRef.child("Users").child(uuidString).child("FriendsRequest");
+        myRef.child("Users").child(uuidString).child("name").setValue(name);
+        myRef.child("Users").child(uuidString).child("surname").setValue(surname);
 
-                            Toast.makeText(getApplicationContext(),"User Created",Toast.LENGTH_LONG).show();
-                            Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
-                            startActivity(intent);
-                        }
+        Intent intent = new Intent(getApplicationContext(), FeedActivity.class);
+        startActivity(intent);
 
-                    }
-                }).addOnFailureListener(this, new OnFailureListener() {
+        /*UUID uuidImage = UUID.randomUUID();
+        String imageName = "images/" + uuidImage + ".jpg";
+        StorageReference storageReference = mStorageRef.child(imageName);
+        storageReference.putFile(selected).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @SuppressWarnings("VisibleForTests")
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+
+                String downloadURL = taskSnapshot.getDownloadUrl().toString();
+
+
+
+
+
+                myRef.child("Users").child(uuidString).child("profilepicURL").setValue(downloadURL);
+
+
+                Intent intent = new Intent(getApplicationContext(), FeedActivity.class);
+                startActivity(intent);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                if(e != null){
-                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
-
-                }
+                Toast.makeText(getApplicationContext(), e.getLocalizedMessage().toString(), Toast.LENGTH_LONG).show();
             }
-        });
-    }
-}
+        });*/
+
+
+    }}

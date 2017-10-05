@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -18,8 +19,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.UUID;
-
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -28,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     EditText passwordText;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference myRef;
+    ImageView imageView;
 
 
     private StorageReference mStorageRef;
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         emailText=(EditText) findViewById(R.id.emailText);
         passwordText=(EditText) findViewById(R.id.passwordText);
+
 
         //mAuth=FirebaseAuth.getInstance();
         firebaseDatabase= FirebaseDatabase.getInstance();
@@ -64,9 +65,12 @@ public class MainActivity extends AppCompatActivity {
                             if(task.isSuccessful()){
 
 
+                            String email=emailText.getText().toString();
+                                String password=passwordText.getText().toString();
 
-
-                                Intent intent=new Intent(getApplicationContext(),.class);
+                                Intent intent=new Intent(getApplicationContext(),InformationActivity.class);
+                                intent.putExtra("email",email);
+                                intent.putExtra("password",password);
                                 startActivity(intent);
                             }
 

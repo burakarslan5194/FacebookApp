@@ -3,6 +3,7 @@ package com.burakarslan.facebookclone;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -18,11 +19,13 @@ import java.util.HashMap;
 public class FriendsProfile extends AppCompatActivity {
 
 
-    String s,emailText;
+    String s;
+    String emailText;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference myRef;
+    TextView textViewName,textViewSurname,textViewEmail;
 
     private StorageReference mStorageRef;
     @Override
@@ -31,11 +34,16 @@ public class FriendsProfile extends AppCompatActivity {
         setContentView(R.layout.activity_friends_profile);
         Intent intent = getIntent();
         emailText= intent.getStringExtra("Email");
+        textViewName=(TextView) findViewById(R.id.textViewName);
+        textViewSurname=(TextView) findViewById(R.id.textViewSurname);
+        textViewEmail=(TextView) findViewById(R.id.textViewEmail);
         firebaseDatabase= FirebaseDatabase.getInstance();
         myRef=firebaseDatabase.getReference();
         mAuth= FirebaseAuth.getInstance();
         mStorageRef= FirebaseStorage.getInstance().getReference();
         getDataFromFirebase();
+
+
 
     }
 
@@ -48,12 +56,18 @@ public class FriendsProfile extends AppCompatActivity {
 
                 for(DataSnapshot ds:dataSnapshot.getChildren()){
                     HashMap<String,String> hashMap= (HashMap<String, String>) ds.getValue();
+                    s=hashMap.get("useremail").toString();
+                    String name=hashMap.get("name").toString();
+                    String surname=hashMap.get("surname").toString();
 
                String key2=ds.getKey();
                     String value=ds.getValue().toString();
 
-                    if(s==emailText)
+                    if(s.equals(emailText))
                     {
+                    textViewName.setText(name);
+                        textViewSurname.setText(surname);
+                        textViewEmail.setText(s);
 
                     }
 

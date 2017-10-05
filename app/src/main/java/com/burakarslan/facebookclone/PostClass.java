@@ -52,12 +52,12 @@ public class PostClass extends ArrayAdapter<String> {
         commentText.setText(userComment.get(position));
 
         Picasso.with(context).load(userImage.get(position)).into(imageView);
-
+        final String useremail=userEmailText.getText().toString();
         userEmailText.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
         Intent intent=new Intent(context,FriendsProfile.class);
-        intent.putExtra("Email",userEmailText.getText());
+        intent.putExtra("Email",useremail);
         context.startActivity(intent);
     }
 });
