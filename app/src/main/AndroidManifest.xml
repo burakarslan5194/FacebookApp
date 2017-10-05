@@ -27,7 +27,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".UploadActivity" />
         <activity android:name=".CropActivity" />
-        <activity android:name=".FriendsProfile"></activity>
+        <activity android:name=".FriendsProfile" />
+        <activity android:name=".InformationActivity"></activity>
     </application>
 
 </manifest>

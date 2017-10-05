@@ -53,7 +53,7 @@ public class PostClass extends ArrayAdapter<String> {
 
         Picasso.with(context).load(userImage.get(position)).into(imageView);
 
-userEmailText.setOnClickListener(new View.OnClickListener() {
+        userEmailText.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
         Intent intent=new Intent(context,FriendsProfile.class);

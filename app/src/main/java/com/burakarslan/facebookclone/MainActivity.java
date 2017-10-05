@@ -65,18 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                                UUID uuid = UUID.randomUUID();
-                                String uuidString = uuid.toString();
 
-                                String email=emailText.getText().toString();
-                                String password2=passwordText.getText().toString();
-                                myRef.child("Users").child(uuidString).child("useremail").setValue(email);
-                                myRef.child("Users").child(uuidString).child("password").setValue(password2);
-                                myRef.child("Users").child(uuidString).child("Friends");
-                                myRef.child("Users").child(uuidString).child("FriendsRequest");
-
-                                Toast.makeText(getApplicationContext(),"User Created",Toast.LENGTH_LONG).show();
-                                Intent intent=new Intent(getApplicationContext(),FeedActivity.class);
+                                Intent intent=new Intent(getApplicationContext(),.class);
                                 startActivity(intent);
                             }
 
