@@ -15,6 +15,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "157274795500-h384oakqdk26pfkgv8ocbcfe6lpt92i0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.burakarslan.facebookclone",
+            "certificate_hash": "71266d4555207b217ee12c624c2b2dae364643d6"
+          }
+        },
+        {
+          "client_id": "157274795500-h1tp0j6q6iu5melnc74ecrl531t37v1p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.burakarslan.facebookclone",
+            "certificate_hash": "ccbb6d597c868d291961c8b2045a7f846bf2da0e"
+          }
+        },
+        {
+          "client_id": "157274795500-r4ltl97inporjp6fhb4n74fjm77ov4fh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.burakarslan.facebookclone",
+            "certificate_hash": "74de51d59ab4cd283b4693ef42426be745fa232e"
+          }
+        },
+        {
           "client_id": "157274795500-2f94leppl5bkmte0h86stb21enb5d7pe.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

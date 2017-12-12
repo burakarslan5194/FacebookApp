@@ -68,8 +68,8 @@ public class InformationActivity extends AppCompatActivity {
         surname = editTextSurname.getText().toString();
         myRef.child("Users").child(uuidString).child("useremail").setValue(email);
         myRef.child("Users").child(uuidString).child("password").setValue(password);
-        myRef.child("Users").child(uuidString).child("Friends");
-        myRef.child("Users").child(uuidString).child("FriendsRequest");
+       // myRef.child("Users").child(uuidString).child("Friends");
+     //   myRef.child("Users").child(uuidString).child("FriendsRequest");
 
         myRef.child("Users").child(uuidString).child("name").setValue(name);
         myRef.child("Users").child(uuidString).child("surname").setValue(surname);
