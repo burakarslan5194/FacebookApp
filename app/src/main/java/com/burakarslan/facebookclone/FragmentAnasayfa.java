@@ -27,12 +27,14 @@ import java.util.HashMap;
 public class FragmentAnasayfa extends Fragment {
 
     ArrayList<String> useremailsFromFB;
+    ArrayList<String> groupsFromFB;
     ArrayList<String> userimagesFromFB;
     ArrayList<String> usercommentsFromFB;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference myRef;
     PostClass adapter;
-    ListView listView;
+    PostClass2 adapter2;
+    ListView listView,listView2;
 
     TextView textView;
     Button button;
@@ -45,16 +47,18 @@ public class FragmentAnasayfa extends Fragment {
         useremailsFromFB=new ArrayList<String>();
         usercommentsFromFB=new ArrayList<String>();
         userimagesFromFB=new ArrayList<String>();
+        groupsFromFB=new ArrayList<String>();
 
         firebaseDatabase=FirebaseDatabase.getInstance();
         myRef=firebaseDatabase.getReference();
 
         adapter= new PostClass(useremailsFromFB,userimagesFromFB,usercommentsFromFB,this);
-
+adapter2=new PostClass2(groupsFromFB,this);
         listView=(ListView) view.findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
-
+        listView2=(ListView) view.findViewById(R.id.listView2);
+        listView2.setAdapter(adapter2);
 
 
         textView=(TextView) view.findViewById(R.id.textView);
@@ -67,6 +71,7 @@ public class FragmentAnasayfa extends Fragment {
             }
         });
         getDataFromFirebase();
+        getDataFromFirebase2();
         return view;
 
 
@@ -87,6 +92,30 @@ public class FragmentAnasayfa extends Fragment {
                     userimagesFromFB.add(hashMap.get("downloadURL"));
                     usercommentsFromFB.add(hashMap.get("comment"));
                     adapter.notifyDataSetChanged();
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+    protected void getDataFromFirebase2(){
+
+        DatabaseReference newReferance=firebaseDatabase.getReference("Groups");
+        newReferance.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot ds:dataSnapshot.getChildren()){
+                    HashMap<String,String> hashMap= (HashMap<String, String>) ds.getValue();
+                  groupsFromFB.add(hashMap.get("Groupname"));
+
+                    adapter2.notifyDataSetChanged();
 
 
                 }

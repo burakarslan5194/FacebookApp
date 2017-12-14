@@ -10,32 +10,67 @@
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="171dp"
-        android:layout_height="137dp"
+        android:layout_height="0dp"
         android:layout_alignParentTop="true"
         app:srcCompat="@android:drawable/ic_menu_add"
-        tools:layout_editor_absoluteY="34dp"
-        tools:layout_editor_absoluteX="107dp" />
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="34dp"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Edit your profile picture"
-        tools:layout_editor_absoluteX="122dp"
-        tools:layout_editor_absoluteY="184dp" />
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/button7"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="12dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <ListView
-        android:layout_width="229dp"
-        android:layout_height="239dp"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="256dp" />
+        android:layout_width="0dp"
+        android:layout_height="204dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="12dp"
+        android:id="@+id/listView2"
+        app:layout_constraintRight_toLeftOf="@+id/buttonaddgrup"
+        tools:layout_constraintTop_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/buttonaddgrup"
+        tools:layout_constraintLeft_creator="1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/buttonaddgrup" />
 
     <Button
         android:id="@+id/button7"
-        android:layout_width="228dp"
-        android:layout_height="34dp"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
         android:text="Bilgilerini Güncelle"
-        tools:layout_editor_absoluteX="25dp"
-        tools:layout_editor_absoluteY="214dp" />
+        android:layout_marginStart="25dp"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/listView2"
+        tools:layout_constraintLeft_creator="1"
+        android:layout_marginBottom="29dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/buttonaddgrup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Grup Ekle"
+        android:layout_marginEnd="31dp"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="69dp" />
 
 </android.support.constraint.ConstraintLayout>

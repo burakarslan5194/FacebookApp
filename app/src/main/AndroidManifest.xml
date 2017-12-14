@@ -28,7 +28,9 @@
         <activity android:name=".UploadActivity" />
         <activity android:name=".CropActivity" />
         <activity android:name=".FriendsProfile" />
-        <activity android:name=".InformationActivity"></activity>
+        <activity android:name=".InformationActivity" />
+        <activity android:name=".ProfilActivity" />
+        <activity android:name=".GroupAddActivity"></activity>
     </application>
 
 </manifest>
